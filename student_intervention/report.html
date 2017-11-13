@@ -12068,7 +12068,7 @@ Index([&#39;school&#39;, &#39;sex&#39;, &#39;age&#39;, &#39;address&#39;, &#39;f
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Calculate number of students</span>
@@ -12084,7 +12084,7 @@ Index([&#39;school&#39;, &#39;sex&#39;, &#39;age&#39;, &#39;address&#39;, &#39;f
 <span class="n">n_failed</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">student_data</span><span class="p">[</span><span class="n">student_data</span><span class="p">[</span><span class="s1">&#39;passed&#39;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;no&quot;</span><span class="p">])</span>
 
 <span class="c1"># TODO: Calculate graduation rate</span>
-<span class="n">grad_rate</span> <span class="o">=</span> <span class="n">n_passed</span> <span class="o">/</span> <span class="n">n_students</span>
+<span class="n">grad_rate</span> <span class="o">=</span> <span class="n">n_passed</span> <span class="o">/</span> <span class="n">n_students</span> <span class="o">*</span> <span class="mi">100</span>
 
 <span class="c1"># Print the results</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total number of students: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_students</span><span class="p">))</span>
@@ -12108,7 +12108,7 @@ Index([&#39;school&#39;, &#39;sex&#39;, &#39;age&#39;, &#39;address&#39;, &#39;f
 Number of features: 30
 Number of students who passed: 265
 Number of students who failed: 130
-Graduation rate of the class: 0.67%
+Graduation rate of the class: 67.09%
 </pre>
 </div>
 </div>
@@ -12906,11 +12906,12 @@ Feature values:
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Import any additional functionality you may need here</span>
-<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">shuffle</span>
+<span class="kn">import</span> <span class="nn">numpy.random</span> 
+<span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> 
 
 <span class="c1"># TODO: Set the number of training points</span>
 <span class="n">num_train</span> <span class="o">=</span> <span class="mi">300</span>
@@ -12920,7 +12921,7 @@ Feature values:
 
 <span class="c1"># TODO: Shuffle and split the dataset into the number of training and testing points above</span>
 <span class="n">rand_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">X_all</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">shuffle</span><span class="p">(</span><span class="n">rand_index</span><span class="p">)</span>
+<span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">rand_index</span><span class="p">)</span>
 
 <span class="n">X_train</span> <span class="o">=</span> <span class="n">X_all</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">rand_index</span><span class="p">[:</span><span class="n">num_train</span><span class="p">]]</span>
 <span class="n">X_test</span> <span class="o">=</span> <span class="n">X_all</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">rand_index</span><span class="p">[</span><span class="n">num_train</span><span class="p">:]]</span>
@@ -13205,8 +13206,22 @@ Testing set has 95 samples.
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong></p>
-<p>Based on the problem setting, I choose the following 3 classification methods:
-Logistic regression, Gradient Boosting, and  Support Vector Machines (SVM).</p>
+<p>Based on the problem setting, I choose the classification methods based on these following considerations:</p>
+<ul>
+<li>there are both categorical and numerical features</li>
+<li>the training data size is small, but there are many features.</li>
+<li>the features are not necessarily linear. </li>
+</ul>
+<p>Based on these considerations, I can quickly rule out some of the methods and the reasons are following:</p>
+<ul>
+<li><p>Gaussian Naive Bayes (GaussianNB) generate some statistical probabilities based on the training data and use them as the prior knowledge for inference. It will generalize poorly when there are situations which GaussianNB hasn't seen before in the training data. Given that there are over 40 features but only 300 training data points, I expect GaussianNB is likely to run into such problems.</p>
+</li>
+<li><p>K-nearest neighbors (KNN) is a beautiful and straightford classification method, and since we are sloving a binary classification problem, basically we know we can set K equals to 2. However, KNN is essentially a <strong>Lazy learner</strong>, and it doesn't learn during training time. In this problem, we want to develop an algorithm which can generalize well and provides insights for future students, therefore KNN is not a good choice.</p>
+</li>
+<li><p>Stochastic Gradient Descent (SGDC) has been successfully applied to large-scale and sparse machine learning problems often encountered in text classification and natural language processing. It can be very efficient when dealing with large number (&gt;10^5) of sparse training examples. However, although it's an efficient algorithm, SGD requires a number of hyperparameters such as the regularization parameter and the number of iterations, and is sensitive to feature scaling. Given that the size of the data is small and the danger of overfitting, SGD is probably an overkill and the tuning of hyperparameters are likely to complicates things unnecessarily in this case.</p>
+</li>
+</ul>
+<p>We are left with choices from Decision Trees, Ensemble Methods, Support Vector Machines (SVM) and Logistic Regression. Since Ensemble Methods are built upon decision tree and are more robustness compared to decision tree, I therefore choose Ensemble Methods, Support Vector Machines (SVM) and Logistic Regression. Below is a discussion on the strength/weakness/industrial applications of these three algorithms.</p>
 <p><strong><em> Logistic Regression </em></strong></p>
 <p>1) real-world application in industry:</p>
 <p>Logistic regression has been shown useful in the area of:</p>
@@ -13662,8 +13677,8 @@ Note that the example illustrated here is shown in a 2D plane, and in real cases
 <p><strong>Support vectors</strong>: Once we understand the concept of maximizing the margin, we can immediately see that the margin lines are only determined by a subset of dots that are close to the margin lines, while the data points that are away from the margin lines have no influence on the outcome whatsoever. This subset of points are called "Support vectors".<br>
 <img src="support_vectors.png" alt="title"></p>
 <p>Note that SVM is versatile and can be used for <strong>both classification and regression</strong>. When we want to separate the dots for classification, we want to maximize the margin. But when we want to predict a trend line following the dots (regression), we want to find the minimum distance between two margin lines which include as many data points in between as possible.</p>
-<p><strong>Hard and soft margin</strong>: We may notice from the above figures that if we were to require a perfectly separation between the green and blue dots (we call this "hard margin"), the margin lines will be very sensitive to any noisy points that lie in between, and in some cases it's even not possible to perfectly separate the green and blue points.  However, if we allow some errors/misclassifications in how the margin lines separate the dots, we can avoid the case where a single outlier totally distors the margin lines (we call this "soft margin"). By using a soft margin, we can essentially regularize the errors to avoid overfitting to small outliers and achieve a more generalized model to fit the unseen data.</p>
-<p><strong>Kernel trick</strong>. We may come across a problem where the datapoints are not linearly separatable in their original space, for example in the case shown below. [1] If we project the data points from their original space [x1, x2] to a higher dimension [x1, x2, x1^2+x2^2], in this case we add a third dimension to represent the square of distance of each point to the origin, we can see that the data points are totally separatable along the 3rd dimension. Simply put, the way we transform the original feature space to a higher dimensional space is call "kernel trick". It adds non-linearity to the feature space based on our domain knowledge, and allows SVM to classify data points that are not linearly separatable.</p>
+<p><strong>Hard and soft margin</strong>: We may notice from the above figures that if we were to require a perfectly separation between the green and blue dots (we call this "hard margin"), the margin lines will be very sensitive to any noisy points that lie in between, and in some cases it's even not possible to perfectly separate the green and blue points.  However, if we allow some errors/misclassifications in how the margin lines separate the dots, we can avoid the case where a single outlier totally distors the margin lines (we call this "soft margin"). By using a soft margin, we can essentially avoid overfitting to noisy points and achieve a more generalized model to fit the unseen data.</p>
+<p><strong>Kernel trick</strong>. We may come across a problem where the datapoints are not linearly separatable in their original space, for example in the case shown below. [1] If we project the data points from their original space to a higher dimension that represents the square of distance of each point to the origin, we can see that the data points are totally separatable as their distance to the origin are dinstinctively different. Simply put, the way we transform the original feature space to a higher dimensional space is call "kernel trick". It adds non-linearity to the feature space based on our domain knowledge, and allows SVM to classify data points that are not linearly separatable.</p>
 <p><img src="kernel_trick.png" alt="title">
 [1] figure source: <a href="http://www.eric-kim.net/eric-kim-net/posts/1/kernel_trick.html">http://www.eric-kim.net/eric-kim-net/posts/1/kernel_trick.html</a></p>
 
