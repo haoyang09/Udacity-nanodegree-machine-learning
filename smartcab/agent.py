@@ -11,7 +11,7 @@ class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
         This is the object you will be modifying. """ 
 
-    def __init__(self, env, learning=False, epsilon=1.0, alpha=0.5):
+    def __init__(self, env, learning=False, epsilon=1.0, alpha=0.5, gamma = 0.0):
         super(LearningAgent, self).__init__(env)     # Set the agent in the evironment 
         self.planner = RoutePlanner(self.env, self)  # Create a route planner
         self.valid_actions = self.env.valid_actions  # The set of valid actions
@@ -21,12 +21,11 @@ class LearningAgent(Agent):
         self.Q = dict()          # Create a Q-table which will be a dictionary of tuples
         self.epsilon = epsilon   # Random exploration factor
         self.alpha = alpha       # Learning factor
-
         ###########
         ## TO DO ##
         ###########
         # Set any additional class parameters as needed
-
+        self.gamma = gamma
 
     def reset(self, destination=None, testing=False):
         """ The reset function is called at the beginning of each trial.
@@ -47,10 +46,9 @@ class LearningAgent(Agent):
             self.alpha = 0
         else:
             #self.epsilon =  max(0, self.epsilon -0.005)
-            eps_min = 0.00001
+            eps_min = 0
             eps_max = 1.0
             eps_decay_steps = 1000
-            #self.alpha = self.alpha * 0.995
             self.epsilon = max(eps_min, self.epsilon - (eps_max-eps_min) / eps_decay_steps)
         return None
 
@@ -102,10 +100,10 @@ class LearningAgent(Agent):
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0.0
         if self.learning == True and state not in self.Q.keys():
-			new_dict = dict()
-			for action in self.valid_actions:
-				new_dict[action] = 0.0
-			self.Q[state] = new_dict
+            new_dict = dict()
+            for action in self.valid_actions:
+                new_dict[action] = 0.0
+            self.Q[state] = new_dict
         return
 
 
@@ -130,10 +128,10 @@ class LearningAgent(Agent):
         if self.learning == False:
             action  = random.choice(self.valid_actions) 
         else:
-			if random.random() < self.epsilon:
-				action  = random.choice(self.valid_actions) 
-			else:
-				action = random.choice([k for k,v in self.Q[state].iteritems() if v == self.get_maxQ(state) ])
+            if random.random() < self.epsilon:
+                action  = random.choice(self.valid_actions) 
+            else:
+                action = random.choice([k for k,v in self.Q[state].iteritems() if v == self.get_maxQ(state) ])
         return action
 
 
@@ -148,7 +146,7 @@ class LearningAgent(Agent):
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
         if self.learning:        
-            self.Q[state][action] = (1-self.alpha)*self.Q[state][action] + self.alpha*(reward+self.get_maxQ(state))
+            self.Q[state][action] = (1-self.alpha)*self.Q[state][action] + self.alpha*reward
 
         return
 
@@ -185,7 +183,7 @@ def run():
     #   learning   - set to True to force the driving agent to use Q-learning
     #    * epsilon - continuous value for the exploration factor, default is 1
     #    * alpha   - continuous value for the learning rate, default is 0.5
-    agent = env.create_agent(LearningAgent, learning = True, alpha = 0.01)
+    agent = env.create_agent(LearningAgent, learning = True, alpha = 0.01) #alpha = 0.01
     
     ##############
     # Follow the driving agent
@@ -207,7 +205,7 @@ def run():
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run( n_test = 10, tolerance = 0.0001)
+    sim.run( n_test = 10, tolerance = 0.0001) #0.0001
 
 
 
