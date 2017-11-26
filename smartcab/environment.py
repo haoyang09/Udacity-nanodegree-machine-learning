@@ -242,7 +242,8 @@ class Environment(object):
             if other_agent == self.primary_agent:
                 continue
             other_heading = other_agent.get_next_waypoint()
-            if (heading[0] * other_state['heading'][0] + heading[1] * other_state['heading'][1]) == -1:
+            if (heading[0] * other_state['heading'][0] + heading[1] * other_state['heading'][1]) == -1: 
+            # if heading is E and other_state['heading'] is W,  or  if heading is S and other_state['heading'] is N
                 if oncoming != 'left':  # we don't want to override oncoming == 'left'
                     oncoming = other_heading
             elif (heading[1] == other_state['heading'][0] and -heading[0] == other_state['heading'][1]):
